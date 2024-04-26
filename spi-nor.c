@@ -204,6 +204,17 @@ static inline int set_4byte(struct spi_nor *nor, const struct flash_info *info,
 			write_disable(nor);
 
 		return status;
+	/*add EON enable/disable 4 bytes addressing mode*/	
+	case SNOR_MFR_EON:
+		if (need_wren)
+			write_enable(nor);
+
+		cmd = enable ? SPINOR_OP_EN4B : SPINOR_OP_EX4B;
+		status = nor->write_reg(nor, cmd, NULL, 0);
+		if (need_wren)
+			write_disable(nor);
+
+		return status;	
 	default:
 		/* Spansion style */
 		nor->cmd_buf[0] = enable << 7;
